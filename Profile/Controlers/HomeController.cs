@@ -1,18 +1,38 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Core.Entities;
+using Core.Interfases;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Profile.ViewModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
+
 namespace Profile.Controlers
 {
     public class HomeController : Controller
     {
+        private readonly IUnitOfWork<Owner> _owner;
+        private readonly IUnitOfWork<ProfileItem> _profileItem;
+
+        public HomeController(IUnitOfWork<Owner> Owner, IUnitOfWork<ProfileItem> ProfileItem)
+        {
+            _owner = Owner;
+            _profileItem = ProfileItem;
+           
+        }
         // GET: HomeController
         public ActionResult Index()
         {
-            return View();
+            var HomeViewModel = new HomeViewModel
+            {
+                owner = _owner.Entity.GetAll().First(),
+                profileItems=_profileItem.Entity.GetAll().ToList()
+                
+            };
+            return View(HomeViewModel);
         }
 
         // GET: HomeController/Details/5
